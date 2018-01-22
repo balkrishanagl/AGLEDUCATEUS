@@ -1,0 +1,1037 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+class user extends CI_Controller
+{
+	function __construct()
+	{
+		parent::__construct();
+		
+		$session_data = $this->session->userdata('admin_user');
+		if($session_data['admin_user_type_id']==2 or $session_data['admin_user_type_id']==3){
+			redirect('admin/dashboard');
+		}
+		if(!$this->session->userdata('admin_user'))
+    	{
+    		redirect('admin/login', 'refresh');
+    	}
+    	$this->load->model('user_model');
+		$this->load->model('student_model');
+		$this->load->model('source_model');
+		$this->load->model('fees_model');
+		$this->load->model('session_model');
+		
+	}
+
+	function user_list()
+	{
+    		$session_data = $this->session->userdata('admin_user');
+		    $data['username'] = $session_data['admin_username'];
+			
+
+		    $header['main_page'] = 'user_list';
+		    $header['tab'] = 'user';
+		    $header['username'] =  $data['username'];
+
+		    $sidebar['page'] = 'user';
+		    $sidebar['main_page'] = 'user_list';
+		    $sidebar['username'] =  $data['username'];
+		    
+		    $footer['main_page'] = 'user_list';
+
+		    $data['all_user_list'] = $this->user_model->get_all_user_list();
+
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/user/user_list',$data);
+			$this->load->view('admin/parts/footer',$footer);
+		
+	}
+
+	function add_user()
+	{
+	
+    		$session_data = $this->session->userdata('admin_user');
+		    $data['username'] = $session_data['admin_username'];
+
+		    $header['main_page'] = 'add_user';
+		    $header['tab'] = 'user';
+		    $header['username'] =  $data['username'];
+
+		    $sidebar['page'] = 'user';
+		    $sidebar['main_page'] = 'add_user';
+
+		    $sidebar['username'] =  $data['username'];
+		    
+		    $footer['main_page'] = 'add_user';
+
+		    $data['all_user_type'] = $this->user_model->get_all_user_type_list(1);
+
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/user/add_user',$data);
+			$this->load->view('admin/parts/footer',$footer);
+		
+	}
+
+	function edit_user($id = NULL)
+	{
+		if($id == NULL)
+		{
+			redirect('user/user_list');
+		}
+		$session_data = $this->session->userdata('admin_user');
+	    $data['username'] = $session_data['admin_username'];
+
+	    $header['main_page'] = 'edit_user';
+	    $header['tab'] = 'user';
+	    $header['username'] =  $data['username'];
+
+	    $sidebar['main_page'] = 'edit_user';
+		$sidebar['username'] =  $data['username'];
+	    
+	    $footer['main_page'] = 'edit_user';
+		
+		
+		 
+	    $data['user_data'] = $this->user_model->get_user_data_by_id($id);
+
+	    $data['all_user_type'] = $this->user_model->get_all_user_type_list(1);
+	    
+		$this->load->view('admin/parts/header',$header);
+		$this->load->view('admin/parts/sidebar_left',$sidebar);
+		$this->load->view('admin/user/edit_user',$data);
+		$this->load->view('admin/parts/footer',$footer);
+		
+	}
+	
+	
+	function student_list()
+	{
+    		$session_data = $this->session->userdata('admin_user');
+		    $data['username'] = $session_data['admin_username'];
+
+		    $header['main_page'] = 'student_list';
+		    $header['tab'] = 'user';
+		    $header['username'] =  $data['username'];
+
+		    $sidebar['page'] = 'user';
+		    $sidebar['main_page'] = 'student_list';
+		    $sidebar['username'] =  $data['username'];
+		    
+		    $footer['main_page'] = 'user_list';
+
+		    $data['all_user_list'] = $this->student_model->get_student_list_manager();
+
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/student/student_list',$data);
+			$this->load->view('admin/parts/footer',$footer);
+		
+	}
+	
+	function add_student(){
+	
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
+		$session_data = $this->session->userdata('admin_user');
+		$data['username'] = $session_data['admin_username'];
+		//echo "<pre>"; print_r($this->session->userdata('admin_user')); die;
+		$header['main_page'] = 'add_student';
+		$header['tab'] = 'user';
+		$header['username'] =  $data['username'];
+		$sidebar['main_page'] = 'add_student';
+		$sidebar['username'] =  $data['username'];
+		$footer['main_page'] = 'add_student';
+		$data['options'] = $this->student_model->get_options();
+		$data['source_data'] =  $this->source_model->get_source_detail();
+		$data['country'] = $this->user_model->getCountry();
+		
+		$error_arr = array();
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		$data['user_type'] = $this->fees_model->getAllFees();
+		
+		//echo '<pre>'; print_r($data['user_type']); die;
+		
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			
+			$sessionStartMonth =  "";
+			$sessionEndMonth =  "";
+			$sessionYear =  "";
+			
+			//echo "<pre>"; print_r($_POST); die;
+			$this->form_validation->set_rules('student_email', 'Email', 'required|valid_email|is_unique[users.email]');
+			$this->form_validation->set_rules('student_name', 'First Name', 'strip_tags|trim|required|xss_clean|callback_alpha_dash_space[first_name]');
+			$this->form_validation->set_rules('username', 'Username', 'is_unique[users.username]|callback_alpha_dash_username');
+			$this->form_validation->set_rules('student_fathername', 'Father Name', 'strip_tags|trim|required|xss_clean|callback_alpha_dash_space[father_name]');
+			$this->form_validation->set_rules('student_gender', 'Gender', 'strip_tags|trim|required|xss_clean');
+			$this->form_validation->set_rules('student_dob', 'DOB', 'strip_tags|trim|required|xss_clean');
+			$this->form_validation->set_rules('student_address', 'Address', 'strip_tags|trim|required|xss_clean');
+			$this->form_validation->set_rules('source_information', 'Source Of Information', 'required');
+			$this->form_validation->set_rules('student_mobile', 'Mobile', 'required|numeric|min_length[10]|max_length[15]');
+			$this->form_validation->set_rules('student_nationality', 'Nationality', 'required');
+			$this->form_validation->set_rules('student_amobile', 'Alternate Mobile', '');
+			$this->form_validation->set_rules('student_qualification', 'Student Qualification', 'required');
+			
+			if($this->input->post('student_type') == 4 ){
+				$this->form_validation->set_rules('student_course', 'Student Course', 'required|callback_alpha_dash_space[course_name]');
+				$this->form_validation->set_rules('student_course_year', 'Student Course Year', 'required');
+				$this->form_validation->set_rules('student_collegename', 'Student Collage', 'required|callback_alpha_dash_space[college_name]');
+				$this->form_validation->set_rules('student_collegeaddress', 'Student Collage Address', 'required');
+				
+				
+				if (empty($_FILES['stu_card']['name']))
+				{
+					$this->form_validation->set_rules('stu_card','Id Card','required');
+				}
+			
+			
+			}else{
+				
+				$this->form_validation->set_rules('st_orgname', 'Organization Name', 'required|callback_alpha_dash_space[org_name]');
+				$this->form_validation->set_rules('designation', 'Designation', 'required|callback_alpha_dash_space[designation]');
+				$this->form_validation->set_rules('st_orgaddress', 'Organization Address', 'required');
+			}
+			
+			if($this->input->post('chk_otheroption') !=0){
+				$this->form_validation->set_rules('source_detail','Source Detail','required');
+			}
+			
+			
+			$this->form_validation->set_rules('student_collegefee', 'Student Course Fees', 'required');
+			if($this->form_validation->run()==FALSE)
+			{
+				$this->load->view('admin/parts/header',$header);
+				$this->load->view('admin/parts/sidebar_left',$sidebar);
+				$this->load->view('admin/student/add_student',$data);
+				$this->load->view('admin/parts/footer',$footer);
+			}
+			else
+			{
+				
+				//echo "<pre>"; print_r($_FILES); die;
+				//$password = '123456';//need to change this.
+				$password = $this->generatePassword();
+				//echo $password; die;
+				$documents = '';
+				if(!empty($_FILES['myfiles']['name'][0]))
+				{
+					
+					$config['upload_path'] = './uploads/documents/';
+					$config['allowed_types'] = '*';
+					$config['max_size']      = 500; 
+					
+					
+					$this->load->library('upload', $config);
+					$dataInfo = array();
+					$files = $_FILES;
+					$cpt = count($_FILES['myfiles']['name']);
+					$this->upload->initialize($config);
+					$docs = '';
+					$error_arr = array();
+					for($i=0; $i<$cpt; $i++)
+					{        
+						//echo $files['myfiles']['name'][$i];
+						$_FILES['myfiles']['name']= $files['myfiles']['name'][$i];
+						$_FILES['myfiles']['type']= $files['myfiles']['type'][$i];
+						$_FILES['myfiles']['tmp_name']= $files['myfiles']['tmp_name'][$i];
+						$_FILES['myfiles']['error']= $files['myfiles']['error'][$i];
+						$_FILES['myfiles']['size']= $files['myfiles']['size'][$i];    
+
+						//$this->upload->initialize($this->set_upload_options());
+						//$this->upload->do_upload();
+						//$dataInfo[] = $this->upload->data();
+						if ( ! $this->upload->do_upload('myfiles'))
+						{ 
+					
+							$output = array('error' => $this->upload->display_errors());
+							$error_arr[] = $output['error']."(Document)";
+							$temp = false;
+						} 
+						else 
+						{
+							$dataInfo[] = $this->upload->data(); 
+							$docs .=$dataInfo[$i]['file_name'].",";
+						}
+						
+					}
+					$documents = rtrim($docs,','); 
+				}
+				
+				/* =============== ID Card Upload ==================== */
+				
+					 
+					$dataCard = '';	
+					if(!empty($_FILES['stu_card']['name']))
+					{
+						
+						$config1['upload_path'] = './uploads/stu_card/';
+						$config1['allowed_types'] = '*';
+						$config1['max_size'] = 200;
+						
+						$this->load->library('upload', $config1);
+						$this->upload->initialize($config1);
+						if ( ! $this->upload->do_upload('stu_card'))
+						{ 
+							
+							$output = array('error' => $this->upload->display_errors()); 
+							$error_arr[] = $output['error']."(Student Card)";
+							$temp = false;
+						} 
+						else 
+						{
+							$dataIdCard = array('upload_data' => $this->upload->data()); 
+							$dataCard = $dataIdCard['upload_data']['file_name'];
+						}
+						
+					}
+					//echo "<pre>"; print_r($error_arr); die;
+			
+			if(count($error_arr)>0){
+				
+				
+				if(isset($error_arr)){
+					$data['file_error'] = $error_arr;
+					
+					//echo '<pre>'; print_r($data['file_error']); die;
+					
+					$this->load->view('admin/parts/header',$header);
+					$this->load->view('admin/parts/sidebar_left',$sidebar);
+					$this->load->view('admin/student/add_student',$data);
+					$this->load->view('admin/parts/footer',$footer);
+					
+				}
+			}else{
+				
+			
+			$userData = array(
+							'username' => $this->input->post('username'),
+							'password' => md5($password),
+							'email' => $this->input->post('student_email'),
+							'user_type_id' => $this->input->post('student_type'),
+							'activated' => 1,
+							'banned' => 0,
+							'ban_reason' => '',
+							'last_ip' => '',
+							'created' => date('Y-m-d H:i:s'),
+						);
+						
+			$session = $this->session_model->getSessionByCurrentDate();
+						
+				if(sizeof($session) >0){
+							
+					$session_id = $session->id;
+					$userData['session_id'] = $session_id;
+					
+					$sessionStartMonth =  date("F", strtotime($session->start_on));
+					$sessionEndMonth =  date("F", strtotime($session->end_on));
+					$sessionYear =  date("Y", strtotime($session->end_on));
+				}			
+			$user_insert_id = $this->user_model->addUserData($userData);
+			
+			// Increment Vendors
+			$this->load->model('source_model');
+			$this->source_model->updateCountSoi($this->input->post('source_information'));
+			
+			
+			$userData1 = array(
+							'user_id' => $user_insert_id,
+							'first_name' => $this->input->post('student_name'),
+							'father_name' => $this->input->post('student_fathername'),
+							'gender' => $this->input->post('student_gender'),
+							'dob' => $this->input->post('student_dob'),
+							'documents' => $documents,
+							'id_card' => $dataCard,
+							'permanent_address' => $this->input->post('student_address'),
+							'correspondence_address' => $this->input->post('student_caddress'),
+							'mobile_number' => $this->input->post('student_mobile'),
+							'contact_number' => $this->input->post('student_amobile'),
+							'course_fee' => $this->input->post('student_collegefee'),
+							'nationality' => $this->input->post('student_nationality'),
+							'qualification' => $this->input->post('student_qualification'),
+							'sourceinformation' => $this->input->post('source_information'),
+							'st_qualification' => $this->input->post('student_qualification'),
+							
+						);
+					
+					if($this->input->post('student_type') == 4){
+						$userData1['about_course'] = $this->input->post('student_course');
+						$userData1['course_year'] = $this->input->post('student_course_year');
+						$userData1['college_name'] = $this->input->post('student_collegename');
+						$userData1['college_address'] = $this->input->post('student_collegeaddress');
+					}else{
+						
+						$userData1['organization'] = $this->input->post('st_orgname');
+						$userData1['designation'] = $this->input->post('designation');
+						$userData1['organisation_address'] = $this->input->post('st_orgaddress');
+						
+					}	
+					
+					if($this->input->post('source_detail')!= null){
+							
+							$userData1['source_detail'] = $this->input->post('source_detail');
+						}
+						
+			$insert_id = $this->user_model->addUserProfile($userData1);
+			
+			$subject = $this->config->item('Site_name') ."- New Student Registration";
+			$data['email'] = $this->input->post('student_email');
+			$data['site_name'] = $this->config->item('Site_name');
+			$result = $this->user_model->getUserByLastId($user_insert_id);
+			$data['name'] = $this->input->post('student_name');
+			$data['username'] = $result->username;
+			$data['password'] = $password;
+			$data['sessionStartMonth'] = $sessionStartMonth;
+			$data['sessionEndMonth'] = $sessionEndMonth;
+			$data['sessionYear'] = $sessionYear;
+			
+			$message = $this->load->view('site/email/welcome',$data, true);
+			$this->sendEmail($data['email'], $subject, $message);
+			
+			$this->session->set_flashdata('success', 'You have added student successfully.');
+			redirect('admin/user/student_list');
+			}
+		}
+		}else {
+						
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/student/add_student',$data);
+			$this->load->view('admin/parts/footer',$footer);
+		}
+	}
+
+	function edit_student($id = NULL)
+	{
+		if($id == NULL)
+		{
+			redirect('user/user_list');
+		}
+		
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
+		
+		
+		$session_data = $this->session->userdata('admin_user');
+		
+	    $data['username'] = $session_data['admin_username'];
+
+	    $header['main_page'] = 'edit_student';
+		$header['tab'] = 'user';
+		$header['username'] =  $data['username'];
+        
+	    $sidebar['main_page'] = 'edit_student';
+	    $sidebar['username'] =  $data['username'];
+	    
+	    $footer['main_page'] = 'edit_user';
+
+	    $data['type_id'] = $this->student_model->get_user_type($id);
+		$data['options'] = $this->student_model->get_options($id);
+		//echo "<pre>"; print_r($data['options']); echo "</pre>"; die;
+		$data['source_data'] =  $this->source_model->get_source_detail();
+	    $data['user_data'] = $usrDt = $this->student_model->get_student_data_by_id($id);
+		//echo $usrDt->course_fee; die;
+		$data['coursefees'] = $usrDt->course_fee;
+		//echo "<pre>"; print_r($data['user_data']); die;
+	    $sesInfo = '';
+	    if(isset($usrDt->sourceinformation)){
+		    $this->session->set_userdata(array(
+	                            'source_information' => $usrDt->sourceinformation,
+	                    ));
+			$sesInfo = $this->session->userdata('source_information');
+		}
+		$data['country_list'] = $this->user_model->getCountryList();
+		$data['state_list'] = $this->user_model->getStateByCountryID($data['user_data']->country);
+		$data['city_list'] = $this->user_model->getCityByStateID($data['user_data']->state);
+	    $data['all_user_type'] = $this->user_model->get_all_user_type_list(1);
+		$data['user_type'] = $this->fees_model->getAllFees();
+		$data['country'] = $this->user_model->getCountry();
+		
+		
+			if($_SERVER['REQUEST_METHOD']=='POST'){
+				
+				
+				$stEmail = $this->input->post('student_email');
+				$userName = $this->input->post('username');
+				
+				$resEmail = $this->student_model->getRecordByEmail($stEmail,$id);
+				$resUser = $this->student_model->getRecordByUsername($userName,$id);
+				//echo "<pre>"; print_r($result); die;
+				
+			// validations 
+			if(sizeof($resEmail)>0)
+			{
+				$this->form_validation->set_rules('student_email', 'Email', 'required|valid_email|is_unique[users.email]');
+			}
+			else
+			{
+				$this->form_validation->set_rules('student_email', 'Email', 'required|valid_email');
+			}
+			if(sizeof($resUser)>0)
+			{
+				$this->form_validation->set_rules('username', 'Username', 'strip_tags|trim|required|xss_clean|is_unique[users.username]|callback_alpha_dash_username');
+			}
+			else
+			{
+				$this->form_validation->set_rules('username', 'Username', 'strip_tags|trim|required|xss_clean|callback_alpha_dash_username');
+			}
+			//$this->form_validation->set_rules('student_password', 'Password', 'required');
+			
+			$this->form_validation->set_rules('student_name', 'First Name', 'strip_tags|trim|required|xss_clean|callback_alpha_dash_space[first_name]');
+			
+			$this->form_validation->set_rules('student_fathername', 'Father Name', 'strip_tags|trim|required|xss_clean|callback_alpha_dash_space[father_name]');
+			$this->form_validation->set_rules('student_gender', 'Gender', 'strip_tags|trim|required|xss_clean');
+			$this->form_validation->set_rules('student_dob', 'DOB', 'strip_tags|trim|required|xss_clean');
+			$this->form_validation->set_rules('student_address', 'Address', 'strip_tags|trim|required|xss_clean');
+			//$this->form_validation->set_rules('student_type', 'User Type', 'required');
+			//$this->form_validation->set_rules('student_country', 'Country', 'required');
+			$this->form_validation->set_rules('source_information', 'Source Of Information', 'required');
+			//$this->form_validation->set_rules('student_state', 'State', 'required');
+			//$this->form_validation->set_rules('student_city', 'City', 'required');
+			//$this->form_validation->set_rules('student_postalcode', 'Pin Code', 'required');
+			$this->form_validation->set_rules('student_mobile', 'Mobile', 'required|numeric|min_length[10]|max_length[15]');
+			$this->form_validation->set_rules('student_nationality', 'Nationality', 'required');
+			$this->form_validation->set_rules('student_amobile', 'Alternate Mobile', '');
+			$this->form_validation->set_rules('student_aemail', 'Alternate Email', '');
+			$this->form_validation->set_rules('student_website', 'Student Website', '');
+			
+			if($this->input->post('student_type') == 4 ){
+				$this->form_validation->set_rules('student_course', 'Student Course', 'required|callback_alpha_dash_space[course_name]');
+				$this->form_validation->set_rules('student_course_year', 'Student Course Year', 'required');
+				$this->form_validation->set_rules('student_collegename', 'Student Collage', 'required|callback_alpha_dash_space[college_name]');
+				$this->form_validation->set_rules('student_collegeaddress', 'Student Collage Address', 'required');
+			}else{
+				
+				$this->form_validation->set_rules('st_orgname', 'Organization Name', 'required|callback_alpha_dash_space[org_name]');
+				$this->form_validation->set_rules('designation', 'Designation', 'required|callback_alpha_dash_space[designation]');
+				$this->form_validation->set_rules('st_orgaddress', 'Organization Address', 'required');
+			}
+			
+			if($this->input->post('chk_otheroption') !=0){
+				$this->form_validation->set_rules('source_detail','Source Detail','required');
+			}
+			
+	
+
+			//create error array
+			$error_arr = array();
+		
+			// Displaying Errors In Div
+			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+				
+				
+				
+			
+            $user_id = $this->input->post('user_id');
+		    //$password = $this->input->post('student_password');
+			if ($this->form_validation->run() == FALSE){
+				$this->load->view('admin/parts/header',$header);
+		        $this->load->view('admin/parts/sidebar_left',$sidebar);
+		        $this->load->view('admin/student/edit_student',$data);
+		        $this->load->view('admin/parts/footer',$footer);
+			} 
+			else {
+			$data_for_update = array(
+				'first_name' => $this->input->post('student_name'),
+				//'last_name' => $this->input->post('student_lastname'),
+				'father_name' => $this->input->post('student_fathername'),
+				'gender' => $this->input->post('student_gender'),
+				'dob' => $this->input->post('student_dob'),
+				//'email' => $this->input->post('student_email'),
+				'permanent_address' => $this->input->post('student_address'),
+				'correspondence_address' => $this->input->post('student_caddress'),
+				//'postal_code' => $this->input->post('student_postalcode'),
+				'mobile_number' => $this->input->post('student_mobile'),
+				'contact_number' => $this->input->post('student_amobile'),
+				//'alternate_email' => $this->input->post('student_aemail'),
+				'nationality' => $this->input->post('student_nationality'),
+				//'country' => $this->input->post('student_country'),
+				//'state' => $this->input->post('student_state'),
+				//'city' => $this->input->post('student_city'),
+				//'website' => $this->input->post('student_website'),
+				'sourceinformation' => $this->input->post('source_information'),
+				'st_qualification' => $this->input->post('student_qualification'),
+				
+				);
+				
+			if($this->input->post('student_type') == 4){
+						$data_for_update['about_course'] = $this->input->post('student_course');
+						$data_for_update['course_year'] = $this->input->post('student_course_year');
+						$data_for_update['college_name'] = $this->input->post('student_collegename');
+						$data_for_update['college_address'] = $this->input->post('student_collegeaddress');
+					}else{
+						
+						$data_for_update['organization'] = $this->input->post('st_orgname');
+						$data_for_update['designation'] = $this->input->post('designation');
+						$data_for_update['organisation_address'] = $this->input->post('st_orgaddress');
+						
+			}	
+			
+			if($this->input->post('source_detail')!= null){
+							
+					$data_for_update['source_detail'] = $this->input->post('source_detail');
+			}else{
+				
+					$data_for_update['source_detail'] = "";
+			}
+			
+			/*if($password != NULL) 
+			{
+				$data_for_update['password'] = MD5($password);
+			}*/
+			
+			/* Update Count */
+			
+			$soi_id = $this->input->post('source_information');
+			if($sesInfo==$soi_id){ }else{
+				$updateCountSoi = $this->source_model->updateCountSoi($soi_id);
+				$decrsCountSoi = $this->source_model->decrsCountSoi($sesInfo);
+			}
+			/* Update Count */
+
+			$user_data = array('email' => $this->input->post('student_email'),'username' => $this->input->post('username'), 'user_type_id' => $this->input->post('student_type'));
+			//echo '<pre>'; print_r($user_data); die;
+			//echo $id; echo "<br>"; echo $user_id; die;
+			$this->student_model->update_student_data($data_for_update,$user_id);	
+			$this->student_model->update_user_data($user_data,$id);	
+			
+			//after successful submission
+				$this->session->set_flashdata('success', 'You have Updated Records successfully.');
+				redirect('admin/user/student_list');
+			
+			}
+			
+			
+			}
+			else {
+						
+		$this->load->view('admin/parts/header',$header);
+		$this->load->view('admin/parts/sidebar_left',$sidebar);
+		$this->load->view('admin/student/edit_student',$data);
+		$this->load->view('admin/parts/footer',$footer);
+			}
+	
+	}
+	
+	// Delete Student list by Id --Manoj Sharma
+	function delete_student($id=null,$sts=null)
+	{
+		if($id!=null){
+			$stsArr = array('activated'=>$sts);
+			$session_data = $this->session->userdata('admin_user');
+			$data['username'] = $session_data['admin_username'];
+			$res = $this->student_model->delStudent($id,$stsArr);
+			
+			if($res==true){
+				$this->session->set_flashdata('success', 'You have change status successfully.');
+				redirect('admin/user/student_list');
+			}
+		} else {
+			redirect('admin/user/student_list');
+		}
+		
+	}
+	
+	function manage_role()
+	{
+    		$session_data = $this->session->userdata('admin_user');
+		    $data['username'] = $session_data['admin_username'];
+
+		    $header['main_page'] = 'manage_role';
+		    $header['tab'] = 'user';
+		    $header['username'] =  $data['username'];
+
+		    $sidebar['page'] = 'user';
+		    $sidebar['main_page'] = 'manage_role';
+		    $sidebar['username'] =  $data['username'];
+		    
+		    $footer['main_page'] = 'manage_role';
+
+		    $data['allUserType'] = $this->student_model->get_all_user_type_list(1);
+
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/role/manage_role',$data);
+			$this->load->view('admin/parts/footer',$footer);
+		
+	}
+	
+	function edit_role($id = NULL)
+	{
+		if($id == NULL)
+		{
+			redirect('user/user_list');
+		}
+		
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
+		
+		
+		$session_data = $this->session->userdata('admin_user');
+		
+	    $data['username'] = $session_data['admin_username'];
+
+	    $header['main_page'] = 'student_list';
+		$header['tab'] = 'user';
+		$header['username'] =  $data['username'];
+        
+	    $sidebar['main_page'] = 'edit_student';
+	    $sidebar['username'] =  $data['username'];
+	    
+	    $footer['main_page'] = 'edit_user';
+
+	    $data['type_id'] = $this->student_model->get_user_type($id);
+	    $data['user_data'] = $this->student_model->get_student_data_by_id($id);
+		$data['country_list'] = $this->user_model->getCountryList();
+		$data['state_list'] = $this->user_model->getStateByCountryID($data['user_data']->country);
+		$data['city_list'] = $this->user_model->getCityByStateID($data['user_data']->state);
+	    $data['all_user_type'] = $this->user_model->get_all_user_type_list(1);
+		
+	   $this->form_validation->set_rules('student_email', 'Email', 'required|valid_email');
+		//$this->form_validation->set_rules('student_password', 'Password', 'required');
+	
+		$this->form_validation->set_rules('student_name', 'First Name', 'strip_tags|trim|required|xss_clean');
+		$this->form_validation->set_rules('student_lastname', 'Last Name', 'strip_tags|trim|required|xss_clean');
+		$this->form_validation->set_rules('student_fathername', 'Father Name', 'strip_tags|trim|required|xss_clean');
+		$this->form_validation->set_rules('student_gender', 'Gender', 'strip_tags|trim|required|xss_clean');
+		$this->form_validation->set_rules('student_dob', 'DOB', 'strip_tags|trim|required|xss_clean');
+		$this->form_validation->set_rules('student_address', 'Address', 'strip_tags|trim|required|xss_clean');
+		//$this->form_validation->set_rules('student_type', 'User Type', 'required');
+		$this->form_validation->set_rules('student_country', 'Country', 'required');
+		$this->form_validation->set_rules('student_state', 'State', 'required');
+		$this->form_validation->set_rules('student_city', 'City', 'required');
+		$this->form_validation->set_rules('student_postalcode', 'Pin Code', 'required');
+		$this->form_validation->set_rules('student_mobile', 'Mobile', 'required');
+		$this->form_validation->set_rules('student_nationality', 'Nationality', 'required');
+		$this->form_validation->set_rules('student_amobile', 'Alternate Mobile', '');
+		$this->form_validation->set_rules('student_aemail', 'Alternate Email', '');
+		$this->form_validation->set_rules('student_website', 'Student Website', '');
+		
+		if($data['type_id']==4 or $data['type_id']==6){
+			$this->form_validation->set_rules('student_qualification', 'Student Qualification', 'required');
+			$this->form_validation->set_rules('student_course', 'Student Course', 'required');
+			$this->form_validation->set_rules('student_course_year', 'Student Course Year', 'required');
+			$this->form_validation->set_rules('student_collegename', 'Student Collage', 'required');
+			$this->form_validation->set_rules('student_collegeaddress', 'Student Collage Address', 'required');
+			$this->form_validation->set_rules('student_collegefee', 'Student Course Fees', 'required');
+		}
+		
+		if($data['type_id']==5){
+			$this->form_validation->set_rules('ind_qualification', 'Industry Qualification', 'required');
+			$this->form_validation->set_rules('ind_organization', 'Industry Organization', 'required');
+			$this->form_validation->set_rules('ind_department', 'Industry Department', 'required');
+			$this->form_validation->set_rules('ind_designation', 'Industry Designation', 'required');
+		}
+	
+
+		//create error array
+		$error_arr = array();
+		
+		// Displaying Errors In Div
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		
+			if($_SERVER['REQUEST_METHOD']=='POST'){
+				
+				
+				
+			
+            $user_id = $this->input->post('user_id');
+		    //$password = $this->input->post('student_password');
+			if ($this->form_validation->run() == FALSE){
+				$this->load->view('admin/parts/header',$header);
+		        $this->load->view('admin/parts/sidebar_left',$sidebar);
+		        $this->load->view('admin/student/edit_student',$data);
+		        $this->load->view('admin/parts/footer',$footer);
+			} 
+			else {
+			$data_for_update = array(
+				'first_name' => $this->input->post('student_name'),
+				'last_name' => $this->input->post('student_lastname'),
+				'father_name' => $this->input->post('student_fathername'),
+				'gender' => $this->input->post('student_gender'),
+				'dob' => $this->input->post('student_dob'),
+				//'email' => $this->input->post('student_email'),
+				'address' => $this->input->post('student_address'),
+				'postal_code' => $this->input->post('student_postalcode'),
+				'mobile_number' => $this->input->post('student_mobile'),
+				'alternate_mobile' => $this->input->post('student_amobile'),
+				'alternate_email' => $this->input->post('student_aemail'),
+				'nationality' => $this->input->post('student_nationality'),
+				'country' => $this->input->post('student_country'),
+				'state' => $this->input->post('student_state'),
+				'city' => $this->input->post('student_city'),
+				'website' => $this->input->post('student_website'),
+				);
+			if($data['type_id']==4 or $data['type_id']==6){
+				$data_for_update1 = array(
+				'st_qualification' => $this->input->post('student_qualification'),
+				'about_course' => $this->input->post('student_course'),
+				'course_year' => $this->input->post('student_course_year'),
+				'college_name' => $this->input->post('student_collegename'),
+				'college_address' => $this->input->post('student_collegeaddress'),
+				'course_fee' => $this->input->post('student_collegefee'),
+				
+				);
+			}
+			if($data['type_id']==5){
+				$data_for_update1 = array(				
+				'ind_qualification' => $this->input->post('ind_qualification'),
+				'ind_organization' => $this->input->post('ind_organization'),
+				'ind_department' => $this->input->post('ind_department'),
+				'ind_designation' => $this->input->post('ind_designation'),
+				);
+			}
+			
+			/*if($password != NULL) 
+			{
+				$data_for_update['password'] = MD5($password);
+			}*/
+			
+			$user_data = array('email' => $this->input->post('student_email'));
+			//echo $id; echo "<br>"; echo $user_id; die;
+			$this->student_model->update_student_data(array_merge($data_for_update,$data_for_update1),$user_id);	
+			$this->student_model->update_user_data($user_data,$id);	
+		
+			//after successful submission
+				$this->session->set_flashdata('success', 'You have registered successfully.');
+				$this->load->view('admin/parts/header',$header);
+		        $this->load->view('admin/parts/sidebar_left',$sidebar);
+		        $this->load->view('admin/student/edit_student',$data);
+		        $this->load->view('admin/parts/footer',$footer);
+			
+			}
+			
+			}
+			else {
+						
+		$this->load->view('admin/parts/header',$header);
+		$this->load->view('admin/parts/sidebar_left',$sidebar);
+		$this->load->view('admin/student/edit_student',$data);
+		$this->load->view('admin/parts/footer',$footer);
+			}
+	
+	}
+	
+	// Delete Student list by Id --Manoj Sharma
+	function delete_role($id=null)
+	{
+		if($id!=null){
+			
+			$session_data = $this->session->userdata('admin_user');
+			$data['username'] = $session_data['admin_username'];
+			
+			$res = $this->student_model->delRole($id);
+			
+			if($res==true){
+				$this->session->set_flashdata('success', 'You have deleted role successfully.');
+				redirect('user/manage_role');
+			}
+		} else {
+			redirect('user/manage_role');
+		}
+		
+	}
+	
+	function delete_user($id=null){
+		if($id!=null){
+			$delete = $this->user_model->delete_user($id);
+			if($id==true){
+				//after successful submission
+				$this->session->set_flashdata('success', 'You have deleted user successfully.');
+				redirect('admin/user/user_list');
+			}
+		}
+	}
+	
+	
+	function download_csv()
+	{
+		
+		//$clientTable = $this->Client_model->create_table_name($clientId);
+		
+		if(!empty($_POST))
+		{
+			
+		
+		
+		$from = $this->input->post('payment_from');
+		$to = $this->input->post('payment_to');	
+		//echo $from."<br>";
+		//echo $to."<br>";
+		$temp = true;
+		if($from!='' && $to!='' && $to < $from)
+		{
+			$this->session->set_userdata('date_error_msg','End date should be greater than Start date');
+			$this->session->set_userdata('from',$from);
+			$this->session->set_userdata('to',$to);
+			$temp = false;
+		}
+		if($from=='' && $to!='')
+		{
+			$this->session->set_userdata('date_error_msg','Please select start date');
+			$this->session->set_userdata('from',$from);
+			$this->session->set_userdata('to',$to);
+			$temp = false;
+		}
+		
+		$fromDate = date('Y-m-d',strtotime($from));
+		$toDate = date('Y-m-d',strtotime($to));
+		$time = date('H:i:s');
+		//echo $fromDate.'<br/>';
+			if($temp)
+			{
+				$this->session->unset_userdata('from',$from);
+				$this->session->unset_userdata('to',$to);
+				$toDte = $toDate.' '.$time; 
+				//echo $toDte; die;
+				$this->load->dbutil();
+				$this->load->helper('file');
+				$this->load->helper('download');
+				//echo ("select * from ".$clientTable." where created >= '".$fromDate."' AND created <= '".$toDte."'"); die;
+				if($from!='' && $to!='')
+				$query = $this->db->query("select user_profiles.*,users.username,users.email,users.created,users.user_type_id,users.activated,users.payment_id from users join user_profiles ON users.id=user_profiles.user_id  where users.created >= '".$fromDate."' AND users.created <= '".$toDate."'");
+				if($from!='' && $to=='')
+				$query = $this->db->query("select user_profiles.*,users.username,users.email,users.created,users.user_type_id,users.activated,users.payment_id from users join user_profiles ON users.id=user_profiles.user_id  where users.created >= '".$fromDate."'");
+				if($from=='' && $to=='')
+					$query = $this->db->query("select user_profiles.*,users.username,users.email,users.created,users.user_type_id,users.activated,users.payment_id from users join user_profiles ON users.id=user_profiles.user_id");
+			
+				$delimiter = ",";
+				$newline = "\r\n";
+				$data = $this->dbutil->csv_from_result($query, $delimiter, $newline);
+				echo force_download('CSV_Report.csv', $data); die;
+			}
+			else
+			{
+				$this->load->library('user_agent');
+				if ($this->agent->is_referral())
+				{
+					redirect($this->agent->referrer());
+				}
+			}
+		}
+				//$status='success';
+				//$msg='Email Sent Successfully';
+	}
+	
+	
+	// Download user data in Excel Format Method
+	
+	public function download_excel(){
+      // get data from databse
+      $data = $this->student_model->getdata();
+       $this->load->helper('download');
+       $this->load->library('PHPReport');
+      $template = 'userdata.xlsx';
+      //set absolute path to directory with template files
+      $templateDir =$_SERVER['DOCUMENT_ROOT'].'/ficci/uploads/tmp/';
+
+      //set config for report
+      $config = array(
+        'template' => $template,
+        'templateDir' => $templateDir
+      );
+
+
+      //load template
+      $R = new PHPReport($config);
+
+      $R->load(array(
+              'id' => 'student',
+              'repeat' => TRUE,
+              'data' => $data   
+          )
+      );
+      
+	  //echo"<pre>"; print_r($data); die;
+      // define output directoy 
+      $output_file_dir = $_SERVER['DOCUMENT_ROOT'].'/ficci/uploads/';
+     
+
+      $output_file_excel = $output_file_dir  . "userdata.xlsx";
+      //download excel sheet with data in /tmp folder
+      $result = $R->render('excel', $output_file_excel);
+	  
+	 $name = 'userdata.xlsx'; 
+	 $data1 = file_get_contents($output_file_dir.'/userdata.xlsx');
+	  header("Content-Type: application/vnd.ms-excel");
+     // header("Content-Disposition: attachment; filename=\"$filename\"");
+	 force_download($name,$data1);
+     }
+	 
+	 function sendEmail($to, $subject, $message){
+		//include email library
+		$this->load->library('email');
+		
+		//set email config
+		//$config['protocol'] = 'mail';
+		$config['mailtype'] = 'html';
+		//$config['charset'] = 'iso-8859-1';
+		//$config['wordwrap'] = TRUE;
+
+		$this->email->initialize($config);
+		
+		$this->email->from("balkrishan.vyas@adglobal360.com", "FICCI");
+		$this->email->to($to);
+		//$this->email->cc('another@another-example.com');
+		//$this->email->bcc('them@their-example.com');
+
+		$this->email->subject($subject);
+		$this->email->message($message);
+
+		$this->email->send();
+	}
+	
+	function generatePassword() 
+	{
+		$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+		$password = array(); 
+		$alpha_length = strlen($alphabet) - 1; 
+		for ($i = 0; $i < 8; $i++) 
+		{
+			$n = rand(0, $alpha_length);
+			$password[] = $alphabet[$n];
+		}
+		return implode($password); 
+	}
+	
+	function alpha_dash_space($str,$field) {
+		
+		//if( ! preg_match("/^([-a-z_ ])+$/i", $str)){ 
+		if( ! preg_match("/^[ A-Za-z.]*$/", $str)){ 
+		
+			if($field == "first_name"){
+				$this->form_validation->set_message('alpha_dash_space', 'First Name Field Should Be Valid');
+			}elseif($field == "father_name"){
+				$this->form_validation->set_message('alpha_dash_space', 'Father Name Field Should Be Valid');
+			}elseif($field == "course_name"){
+				$this->form_validation->set_message('alpha_dash_space', 'Course Name Field Should Be Valid');
+			}elseif($field == "college_name"){
+				$this->form_validation->set_message('alpha_dash_space', 'College Name Field Should Be Valid');
+			}elseif($field == "org_name"){
+				$this->form_validation->set_message('alpha_dash_space', 'Organization Name Field Should Be Valid');
+			}elseif($field == "designation"){
+				$this->form_validation->set_message('alpha_dash_space', 'Designation Field Should Be Valid');
+			}
+			return FALSE;
+		}else{ 
+			
+			return TRUE; 
+		} 
+
+	}
+	
+	function alpha_dash_username($str) {
+		
+		//if( ! preg_match("/^([-a-z_ ])+$/i", $str)){ 
+		if( ! preg_match("/^[ A-Za-z0-9.]*$/", $str)){ 
+			$this->form_validation->set_message('alpha_dash_username', 'User Name Field Should Be Valid');
+		
+			return FALSE;
+		}else{ 
+			
+			return TRUE; 
+		} 
+
+	}
+	
+	
+}

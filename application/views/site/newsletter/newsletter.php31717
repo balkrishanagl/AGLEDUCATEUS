@@ -1,0 +1,30 @@
+ <div class="subcribe">
+      <h1>Subscribe to Our Newsletter</h1>
+
+      <form id="frmNewsletter" name="frmNewsletter"  data-toggle="validator" role="form">
+        <ul>
+          <li>
+		  <div class="form-group">
+            <input type="text" value="" placeholder="Name" name="name" id="name" pattern="^[a-zA-Z ]+$" data-pattern-error="Please Enter Valid Name" data-error="Please Enter Your Name" required  >
+			<div class="help-block with-errors"></div>
+			</div>
+          </li>
+          <li>
+		  <div class="form-group">
+            <input type="text" value="" placeholder="Email" name="email" id="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" data-pattern-error="Please Enter Valid Email" data-error="Please Enter Your Email" required >
+			<div class="help-block with-errors"></div>
+			</div>
+          </li>
+          <li>
+		  <div class="form-group">
+            <input type="text" value="" placeholder="Contact" name="contact" id="contact" >
+			<div class="help-block with-errors"></div>
+			</div>
+          </li>
+          <li>
+			<input type="submit" value="SUBMIT NOW" name="btnSubscriber" id="btnSubscriber">
+			
+          </li>
+        </ul>
+      </form>
+    </div>

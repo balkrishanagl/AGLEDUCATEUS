@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<?php if(isset($this->config->item('page_meta')->page_meta_title) && $this->config->item('page_meta')->page_meta_title !=""){ ?>
+	<title><?php echo $this->config->item('page_meta')->page_meta_title; ?></title>
+	
+<?php }else{ ?>
+	<title>FICCI-IP PRO | Home Page</title>
+<?php } ?>
+<meta name=viewport content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="<?php echo base_url(); ?>assets/site/css/menu_icon.css">
+<link href="<?php echo base_url(); ?>assets/site/css/font-awesome.min.css" rel="stylesheet"  />
+<link href="<?php echo base_url(); ?>assets/site/css/layout.css" rel="stylesheet"  />
+<link href="<?php echo base_url(); ?>assets/site/css/screen.css" rel="stylesheet"  />
+<link href="<?php echo base_url(); ?>assets/site/css/custom.css" rel="stylesheet"  />
+</head>
+
+<body>
+
+<!-- start header -->
+
+<header>
+  <div class="wrapper">
+    <div class="logo"><a href="<?php echo $this->config->item('headerLogoUrl1'); ?>"><img src="<?php echo base_url().$this->config->item('headerLogo1'); ?>" alt=""></a></div>
+    <ul class="login_broucer">
+      <li><a href="#"><i class="fa fa-download" aria-hidden="true"></i> brochure</a></li>
+	   <?php if($this->session->userdata('site_user')){ ?>
+	   <li><a href="<?php echo base_url()?>welcome/logout"><i class="fa fa-user" aria-hidden="true"></i> Logout</a></li>
+	   <?php }else{ ?>
+		 <li><a href="<?php echo base_url()?>welcome/user_login"><i class="fa fa-user" aria-hidden="true"></i> Login</a></li>
+		
+		<?php } ?>
+      
+    </ul>
+     <?php if($this->session->userdata('site_user')){ ?>
+    <nav class="nav_dash">
+	<?php }else{ ?>
+	<nav class="nav">
+	<?php } ?>
+      <div class="sb-toggle-right  top_click"> <a href="javascript:void(0);">
+        <div class="three_line three_line--htx"><span>toggle menu</span> </div>
+        </a></div>
+      <ul>
+        <li><a href="<?php echo base_url()?>">Home</a></li>
+        <li><a href="javascript:void(0);">About Us <span><img src="<?php echo base_url(); ?>assets/site/images/down_arrow.png" alt=""></span></a>
+          <ul class="sub_menu">
+            <li><a href="<?php echo base_url()?>about/ficci">FICCI</a></li>
+            <li><a href="<?php echo base_url()?>about/ipr-division">IPR division at FICCI</a></li>
+            <li><a href="<?php echo base_url()?>about/ficci-ipec"> FICCI-IPEC</a></li>
+          </ul>
+        </li>
+        <li><a href="javascript:void(0);">Course <span><img src="<?php echo base_url(); ?>assets/site/images/down_arrow.png" alt=""></span></a>
+          <ul class="sub_menu">
+            <li><a href="<?php echo base_url()?>course/about"> About the course</a></li>
+            <li><a href="<?php echo base_url()?>course/course-methodology"> Course Methodology</a></li>
+            <li><a href="<?php echo base_url()?>course/training-material"> Training Material</a></li>
+            <li><a href="<?php echo base_url()?>course/eligibility"> Eligibility</a></li>
+            <li><a href="<?php echo base_url()?>course/fees-and-duration"> Fees & Duration</a></li>
+          </ul>
+        </li>
+        <li><a href="javascript:void(0);">Resources <span><img src="<?php echo base_url(); ?>assets/site/images/down_arrow.png" alt=""></span></a>
+          <ul class="sub_menu">
+            <li><a href="<?php echo base_url()?>news-events"> IP News & Events</a></li>
+            <!--<li><a href="blogs.html"> Blogs</a></li>-->
+            <li><a href="<?php echo base_url()?>internships"> Internships</a></li>
+            <li><a href="<?php echo base_url()?>faq"> Faqs</a></li>
+          </ul>
+        </li>
+        <li><a href="<?php echo base_url()?>contact-us">Contact Us</a></li>
+		<?php if($this->session->userdata('site_user')){ ?>
+		<li><a href="<?php echo base_url()?>student/user_dashboard">Dashboard</a></li>
+		<?php } ?>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- end header --> 

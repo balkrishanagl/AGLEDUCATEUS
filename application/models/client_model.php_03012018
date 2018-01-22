@@ -1,0 +1,72 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+Class client_model extends CI_Model
+{
+	function saveFormData($data){
+		$this->db->insert('ficci_services_form_data',$data);
+		return $this->db->insert_id();
+	}
+	
+	
+	function save_client($data)
+	{
+		$this->db->insert('ficci_client',$data);
+		return $this->db->insert_id();
+	}
+	
+	function clientLogin($username, $password){
+		
+		$this -> db -> select('id, email, password');
+		$this -> db -> from('ficci_client');
+		$this -> db -> where('email = ' . "'" . $username . "'"); 
+		$this -> db -> where('password = ' . "'" . $password . "'"); 
+		$this -> db -> limit(1);
+
+		$query = $this -> db -> get();
+
+		if($query -> num_rows() == 1)
+		{
+			return $query->row();
+		}
+		else
+		{
+			return false;
+		}
+		
+		
+	}
+	
+	function getClientByEmailId($emailId){
+		
+		$this->db->select('*');
+		$this->db->where('email', $emailId);
+        $q = $this->db->get('ficci_client');
+		
+		if ($q->num_rows()) {
+			
+			return $result = $q->row();
+		}else{
+			
+			return false;
+		}
+		
+	}
+	
+	function getFormData($id){
+		
+		
+		$this->db->select('*');
+		$this->db->where('client_id', $id);
+		$this->db->order_by('created','desc');
+        $this->db->from('ficci_services_form_data');
+        $query = $this->db->get();
+        return $result = $query->result();
+		
+	}
+	
+	function updateClientDocument($id,$data_update){
+		
+		$this->db->where('id',$id);
+		$this->db->update('ficci_services_form_data',$data_update);
+	}
+}
+?>

@@ -1,0 +1,77 @@
+<div class="banner">
+  <ul class="owl-carousel" id="home_slide">
+    <li> <img src="<?php echo base_url(); ?>assets/site/images/registraion_banner.jpg" alt="">
+      <div class="tag1">Payment</div>
+    </li>
+  </ul>
+</div>
+
+<section class="about_sec registration title_bdr">
+<div class="wrapper">
+<div class="regis_form_box">
+<?php if(validation_errors()){?>
+<div class="reg validate-error"><?php echo validation_errors(); ?></div>
+<?php } ?>
+<div class="reg paylist">
+
+        <form id="frmPayment" name="frmPayment" method="POST" action="<?php echo base_url(); ?>student/make_payment/" data-toggle="validator" role="form">
+          <ul>
+          
+             <li>
+				  <label>Payment Type</label>
+                   <div class="form-group">
+				  <select id="payment_type" name="payment_type"  data-error="Please Slect Payment Type" required>
+					<option value="">Select Payment Type</option>
+					<option <?php if(set_value('payment_type')=='1'){ ?> selected <?php } ?> value="1">DD</option>
+					<option <?php if(set_value('payment_type')=='2'){ ?> selected <?php } ?> value="2">NEFT</option>
+					<option <?php if(set_value('payment_type')=='3'){ ?> selected <?php } ?> value="3">RTGS</option>
+					<option <?php if(set_value('payment_type')=='4'){ ?> selected <?php } ?> value="4">CHEQUE</option>
+					</select>
+              </div>
+              </li>
+			 <li>
+				  <label>Cheque/DD No</label>
+				  <div class="form-group">
+				  <input name="chequenumber" id="chequenumber" value="<?php echo set_value('chequenumber'); ?>" placeholder="Cheque Number" data-error="Please Enter Check" required type="text">
+				  <div class="help-block with-errors"></div>
+				  </div>
+			</li> 
+			
+			 <li>
+				  <label>Cheque/DD Date</label>
+				  <div class="form-group">
+				  <input type="text" id="chequedate" name="chequedate" value="<?php echo set_value('chequedate'); ?>" placeholder="Cheque Date" required />
+				  <div class="help-block with-errors"></div>
+				  </div>
+			</li> 
+			
+			 <li>
+				  <label>Course Fees</label>
+				  <div class="form-group">
+				  <input id="coursefees" name="coursefees" value="<?php echo $fee; ?>" placeholder="500" required readonly type="text">
+				  <div class="help-block with-errors"></div>
+				  </div>
+			</li> 
+			
+			<li>
+				  <label>Bank Name</label>
+				  <div class="form-group">
+				  <input id="bankname" name="bankname" value="<?php echo set_value('bankname'); ?>" placeholder="Bank Name" required type="text">
+				  <div class="help-block with-errors"></div>
+				  </div>
+			</li> 
+			
+			<li>
+				  <label>Branch Name</label>
+				  <div class="form-group">
+				  <input id="branchname" name="branchname" value="<?php echo set_value('branchname'); ?>" placeholder="Branch Name" required type="text">
+				  <div class="help-block with-errors"></div>
+				  </div>
+			</li> 
+			 <li><input type="submit" id="btnSavePayment" value="Save"></li>
+		</ul>
+	    </form>
+</div>
+</div>
+</div>
+</section>

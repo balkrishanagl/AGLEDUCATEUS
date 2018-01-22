@@ -1,0 +1,144 @@
+ @media screen and (max-width:1500px) {
+.wrapper { width:98%; }
+
+}
+ @media screen and (max-width:1100px) {
+.login_broucer { margin-top:20px; }
+nav { margin-top:10px; }
+.middle_cont .course { font-size:25px; }
+
+.right_footer { width:52%; }
+.left_footer li { font-size:13px; }
+.event_list{ margin-left:1%;}
+.four_box li h3{ font-size:20px;}
+.four_box li p{ line-height:18px;}
+
+}
+ @media screen and (max-width:1023px) {
+	  header{ position:static; padding-bottom:0; background:#373737;}
+.login_broucer { margin-top:60px; }
+nav { width:auto; }
+.top_click { display:block; position:absolute; right:10px; top:10px; }
+nav ul { background: #666; display: none; position: absolute; left: 0; z-index:999; width:100%; top:50px; }
+nav li { float: left; margin: 0; padding: 0; text-align: left; width: 100%; border-bottom:1px solid #000; }
+nav li a { float: left; padding: 10px 5%; width: 100%; color:#fff; }
+nav li a:hover { background: #dedede; border-radius: 0px; box-shadow: 0px 0px 0px #cfcfd2; }
+nav li .sub_menu:before{ display:none;}
+
+nav li .sub_menu{ position:static;}
+nav li .sub_menu li{ width:100%;}
+nav li:hover .sub_menu{ display:none;}
+nav li span{ right:10px; top:10px;}
+
+.grey_strip p { font-size:15px; }
+.about_box { margin:0; }
+.about { float:left; width:100%; height:auto; }
+.right_content { float:left; width:100%; margin-top:50px; }
+.latest_news { width:25%; }
+.testi_box { width:90%; }
+.left_footer { width:100%; text-align:center; }
+.left_footer li { float:none; display:inline-block; width:30%; vertical-align:top; text-align:center; padding-left:0; }
+.left_footer li .fa { width:100%; }
+.right_footer { float:left; width:100%; text-align:center; margin-top:20px; }
+.right_footer .footer_menu { float:left; text-align:center; }
+.center_box img{ width:100%;}
+
+}
+
+ @media screen and (max-width:900px) {
+	 
+	 .about_sec{ padding:10px 0;}
+	 .left_about{ width:100%;}
+	 .left_abt_img{ width:100%;}
+	 .right_txt{ height:auto;}
+	 .center_box{ width:100%; text-align:center; float:left; margin-top:50px; display:none;}
+	 .session{ float:none; display:inline-block;}
+	 .thumbline li{ width:49%;}
+	 .thumbline li:nth-child(3n){ margin-right:2%;}
+	 .thumbline li:nth-child(2n){ margin-right:0;}
+	 .tag1{ font-size:22px; bottom:10px;}
+	 .left_about h1{ font-size:25px;}
+	 .four_box li{ width:45%; margin:40px 0;}
+	 .regist_text{ float:left; width:100%;}
+	 .regist{ float:left; width:100%; text-align:center;}
+	 .regist img{ text-align:center; margin:10px 0;}
+	 .faq1{ width:90%;}
+	 .faqs h1{ margin-bottom:35px;}
+	 
+	 
+	 
+ }
+
+
+ @media screen and (max-width:768px) {
+	 
+	 
+}
+ @media screen and (max-width:767px) {
+	
+.login_broucer { display:none; }
+.logo { width:50%; }
+.logo img { width:100%; }
+.top_click { top:3%; }
+nav ul { top:7%; }
+.grey_strip { text-align:center; }
+.grey_strip p { width:100%; text-align:center; }
+.grey_strip .blu_btn { float:none; display:inline-block; vertical-align:top; margin-top:20px; }
+#next1, #prev1 { background-size:100%; width:20px; }
+.banner .owl-controls{ display:none !important;}
+.right_content ul { float:left; width:100%; }
+.right_content ul:last-child { float:left; width:100%; }
+.learn_box h1 { font-size:20px; }
+h1 { font-size:22px; }
+.learn_box li { width:45%; margin:0 1% 10px 1%; }
+.learn_box h2 { font-size:18px; }
+.latest_news { width:100%; }
+.event_list { float:left; width:100%; margin:10px 0; }
+.subcribe { display:table; width:100%; background-position:center 0; background:#f58220; padding-bottom:30px; }
+.news_events, .tesimonials { margin:10px 0; }
+
+
+.left_about p{ font-size:13px; line-height:20px;}
+.right_txt{ padding:10px;}
+
+.thumbline li{ width:100%;}
+.thumbline li:nth-child(3n){ margin-right:0;}
+.thumbline li:nth-child(2n){ margin-right:0;}
+.title_bdr h1{ font-size:25px;}
+
+
+}
+ @media screen and (max-width:599px) {
+.top_click { top:1.5%; }
+nav ul { top:10%; }
+.slider_box .slick-next { right:10px !important; }
+.slider_box .slick-prev { left:10px !important; }
+.left_footer li { width:100%; }
+.middle_cont .course{ font-size:20px; padding:0 10px;}
+.left_about{ text-align:center;}
+.left_about h1{ font-size:20px; text-align:center;}
+.left_about h1::after{ right:0; margin:auto;}
+.left_about p{ text-align:center;}
+.left_about a{ float:none; display:inline-block; margin:10px 0;}
+.four_box{ padding-bottom:0px;}
+.four_box ul{ margin-top:30px;}
+.four_box li{ margin:30px 0 30px 0; width:96%;}
+
+.reg ul{ margin:10px 0;}
+.reg ul li label{ float:left; width:100%; margin-right:0; margin-bottom:10px;}
+.reg input[type="text"], .reg input[type="email"], .reg input[type="password"], .reg input[type="tel"], .reg input[type="search"], .reg select, .reg textarea{ width:100%;}
+.reg ul li span{ width:85%;}
+.reg ul li:last-child label{ display:none;}
+
+
+
+
+}
+
+ @media screen and (max-width:479px) {
+.session{ width:90%;}
+.green_btn a{ padding:10px;}	 
+.orange_btn a{ padding:10px;}
+.thumbline li:first-child .log1{ width:15%;}
+
+ }

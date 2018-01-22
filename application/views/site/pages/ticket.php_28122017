@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Registration</title>
+
+</head>
+<body>
+<div style="width:650px; margin:auto;">
+<div class="pdffile" style="width:650px;float:left; font-family:Arial, Helvetica, sans-serif; color:#333; border: 5px solid transparent; padding: 0px; border-image: url(<?php echo base_url();?>assets/site/images/pdf/border.png) 10; -webkit-border-image: url(<?php echo base_url();?>assets/site/images/pdf/border.png) 10; -moz-border-image: url(<?php echo base_url();?>assets/site/images/pdf/border.png) 10;">
+<div class="innerpdf" style="float:left; width:98%; padding:20px 1%;">
+
+<header style="background:#eeeeee; float:left; width:100%; text-align:center; padding:20px 0;">
+<div class="logo"><img src="<?php echo base_url();?>assets/site/images/pdf/logo.png" alt="" ></div>
+
+<div class="timing" style="color:#0887ca; font-size:25px; font-weight:bold; border-bottom:1px solid #0887ca; border-top:1px solid #0887ca; padding:5px 0; margin-top:20px; display:inline-block;">Timing: <?php echo $start_time; ?> to <?php echo $end_time; ?></div>
+
+</header>
+
+<h1 style="text-align:center; font-size:25px; padding:10px 5%; float:left; width:90%;"><?php echo $start_date;?><?php if(isset($end_date) && $end_date !="" ){ ?> & <?php echo $end_date; } ?> <?php echo $event_month_year;?>
+ <?php if(isset($location) && $location !=""){ echo $location; } ?>, <?php echo $city; ?> </h1>
+
+<div class="details" style="float:left; width:100%; margin:10px 5%; text-align:left; font-size:25px; font-weight:bold;">
+
+<p class="name">Name <?php echo $name; ?> </p>
+<p class="name">Registration no <?php echo $voucher; ?> </p>
+
+
+</div>
+
+
+<div class="ss" style="padding:20px 0; text-align:center;"><img  src="<?php echo base_url();?>assets/site/images/pdf/ss.png" alt="" style="width:100%"> </div>
+
+<footer><img src="<?php echo base_url();?>assets/site/images/pdf/footer.png" alt="" style="width:100%; max-height:200px;"></footer>
+
+</div>
+</div>
+<div>
+
+
+</body>
+</html>

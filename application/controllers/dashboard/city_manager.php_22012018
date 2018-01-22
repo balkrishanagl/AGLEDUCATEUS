@@ -1,0 +1,237 @@
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+
+class City_manager extends CI_Controller
+{
+	function __construct()
+	{
+		parent::__construct();
+		
+		$session_data = $this->session->userdata('admin_user');
+	   
+		
+		if(!$this->session->userdata('admin_user'))
+    	{
+    		redirect('admin/login', 'refresh');
+    	}
+    	$this->load->model('city_model');
+		$this->load->model('user_model');
+		//$this->load->model('tool_model');
+	}
+	function manage_city()
+	{
+    		$session_data = $this->session->userdata('admin_user');
+		    $data['username'] = $session_data['admin_username'];
+
+		    $header['main_page'] = 'manage_city';
+		    $header['tab'] = 'city';
+		    $header['username'] =  $data['username'];
+
+		    $sidebar['page'] = 'city';
+		    $sidebar['main_page'] = 'manage_city';
+		    $sidebar['username'] =  $data['username'];
+		    
+		    $footer['main_page'] = 'manage_city';
+
+		    $data['city_details'] = $this->city_model->get_city_detail();
+		    // echo "<pre>"; print_r($data['city_details']); echo "</pre>";die;
+            $data['state_data'] = $this->city_model->getStateData();
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/city/manage_city',$data);
+			$this->load->view('admin/parts/footer',$footer);    	
+
+	}
+
+	function add_city()
+	{
+	
+		$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
+		
+    	$session_data = $this->session->userdata('admin_user');
+		$data['username'] = $session_data['admin_username'];
+
+        $data['state_data'] = $this->city_model->getStateData();
+		$header['main_page'] = 'add_city';
+		$header['tab'] = 'city';
+		$header['username'] =  $data['username'];
+
+		$sidebar['page'] = 'city';
+		$sidebar['main_page'] = 'add_city';
+
+		$sidebar['username'] =  $data['username'];
+		
+		$footer['main_page'] = 'add_city';
+
+		
+		
+		
+		//create error array
+		$error_arr = array();
+		
+		// Displaying Errors In Div
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		  
+		  if($_SERVER['REQUEST_METHOD']=='POST')
+		{	
+
+			$this->form_validation->set_rules('city_name', 'City Name', 'strip_tags|trim|required|xss_clean');
+			
+			if($this->input->post('type') == "Domestic"){
+				$this->form_validation->set_rules('state','State', 'required');
+			}
+			
+		  if ($this->form_validation->run() == FALSE){
+			
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/city/add_city',$data);
+			$this->load->view('admin/parts/footer',$footer);
+			
+		} 
+			else {
+						
+            $data_addcity = array(
+			'city_name' => $this->input->post('city_name'),
+			'type' => $this->input->post('type'),
+			'state_name' => $this->input->post('state')
+			
+			);
+			
+			
+			    
+	
+			 $this->city_model->add_city_data($data_addcity);
+			
+		
+				//after successful submission
+				$this->session->set_flashdata('success', 'You have added city successfully.');
+				redirect('admin/city/add_city/');
+			
+			
+			}
+		}
+			  
+			  else {
+				
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/city/add_city',$data);
+			$this->load->view('admin/parts/footer',$footer);	
+			
+			  }
+		
+	}
+
+	function edit_city($id = Null)
+	{
+		
+			if($id == NULL)
+		{
+			//redirect('admin/city/manage_city');
+		}
+	
+    	$this->load->helper(array('form', 'url'));
+		$this->load->library('form_validation');
+		
+		$data['city_data'] = $cityDetail = $this->city_model->get_city_data_by_id($id);
+
+        $data['state_data'] = $this->city_model->getStateData();
+		
+    	$session_data = $this->session->userdata('admin_user');
+		    $data['username'] = $session_data['admin_username'];
+
+		    $header['main_page'] = 'edit_city';
+		    $header['tab'] = 'city';
+		    $header['username'] =  $data['username'];
+
+		    $sidebar['page'] = 'city';
+		    $sidebar['main_page'] = 'edit_city';
+
+		    $sidebar['username'] =  $data['username'];
+		    
+		    $footer['main_page'] = 'edit_city';
+
+	  
+	   	
+		
+		  
+		//create error array
+		$error_arr = array();
+		
+		// Displaying Errors In Div
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		  
+		  if($_SERVER['REQUEST_METHOD']=='POST')
+		  {
+			  
+			  $this->form_validation->set_rules('city_name', 'City Name', 'strip_tags|trim|required|xss_clean');
+			 
+			 if($cityDetail->type == "Domestic"){
+			  $this->form_validation->set_rules('state','State', 'required');
+			 }
+			  
+			  if ($this->form_validation->run() == FALSE){
+				  
+				$this->load->view('admin/parts/header',$header);
+		        $this->load->view('admin/parts/sidebar_left',$sidebar);
+		        $this->load->view('admin/city/edit_city',$data);
+		        $this->load->view('admin/parts/footer',$footer);
+			} 
+			else {
+			
+			$state = $this->input->post('state');
+			if($cityDetail->type== "International"){
+				$state = "";
+			 }
+			$data_update_city = array(
+			'city_name' => $this->input->post('city_name'),
+			'state_name' => $state
+			);
+	
+			$this->city_model->update_city_data($data_update_city,$id);
+	
+			//after successful submission
+				$this->session->set_flashdata('success', 'You have updated a city successfully.');
+				redirect('admin/city/manage_city/');
+			
+			}
+			  }
+			  
+			  else {
+				
+			$data['city_data'] = $this->city_model->get_city_data_by_id($id);
+			
+			$this->load->view('admin/parts/header',$header);
+			$this->load->view('admin/parts/sidebar_left',$sidebar);
+			$this->load->view('admin/city/edit_city',$data);
+			$this->load->view('admin/parts/footer',$footer);	
+			
+			  }
+		
+	}
+	
+	function delete_city($id=null)
+	{
+		
+      if($id!=null){
+	
+	  $session_data = $this->session->userdata('admin_user');
+	  $data['username'] = $session_data['admin_username'];
+	
+	  $res = $this->city_model->delete_city_by_id($id);
+	
+	  if($res==true){
+		$this->session->set_flashdata('success', 'You have deleted city successfully.');
+		redirect('admin/city/manage_city');
+	}
+    } else {
+	redirect('admin/city/manage_city');
+    }
+
+	}
+	
+	  
+	
+}
+

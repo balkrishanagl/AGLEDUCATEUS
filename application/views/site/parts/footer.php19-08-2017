@@ -1,0 +1,279 @@
+<!-- start footer -->
+
+<footer>
+  <div class="wrapper">
+  
+
+    <div class="left_footer">
+      <ul>
+        <li> <i class="fa fa-map-marker" aria-hidden="true"></i> <?php echo $this->config->item('Address'); ?></li>
+        <li><i class="fa fa-envelope-o" aria-hidden="true"></i>E-mail: <?php echo $this->config->item('Email'); ?> </li>
+        <li><i class="fa fa-phone" aria-hidden="true"></i> Contact Numbers: <?php echo $this->config->item('phone'); ?></li>
+      </ul>
+    </div>
+    <div class="right_footer">
+      <div class="footer_menu">
+        <ul>
+          <li><a href="<?php echo base_url()?>faq">FAQs</a></li>
+          <li><a href="<?php echo base_url()?>disclaimer">Disclaimer</a></li>
+          <li><a href="<?php echo base_url()?>terms">Terms of Use</a></li>
+          <li><a href="#form_poup" class="form_box_poup">Feedback</a></li>
+          <li><a href="<?php echo base_url()?>contact-us">Contact Us</a></li>
+        </ul>
+      </div>
+      <p><?php echo $this->config->item('copyright'); ?></p>
+    </div>
+  </div>
+</footer>
+
+<div class="poup_form" id="form_poup" style="display:none;">
+<form name="feedback_form" id="feedback_form" data-toggle="validator" role="form">
+<input type="hidden" name="formName" value="Feedback Form">
+  <ul>
+    <li>
+	  <div class="form-group">
+      <input type="text" value="" placeholder="Name" name="Name" id="fName" pattern="^[a-zA-Z ]+$" data-pattern-error="Please Enter Valid Name" data-error="Please Enter Your Name" required >
+	  <div class="help-block with-errors"></div>
+	  </div>
+    </li>
+    <li>
+	<div class="form-group">
+      <input type="text" value="" placeholder="Email" name="Email" id="fEmail" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" data-pattern-error="Please Enter Valid Email" data-error="Please Enter Your Email" required >
+	  <div class="help-block with-errors"></div>
+	  </div>
+    </li>
+    <li>
+	<div class="form-group">
+      <input type="text" value="" placeholder="Phone" name="Phone" id="fPhone" pattern="^\d{4}\d{3}\d{3}$" data-pattern-error="Please Enter Valid Mobile No" data-error="Please Enter Mobile No" required >
+	  <div class="help-block with-errors"></div>
+	  </div>
+    </li>
+    
+    <li>
+		<div class="form-group">
+		<textarea placeholder="Feedback Comments" name="Feedback" id="fFeedback" data-error="Please Enter Comment" required></textarea>
+		 <div class="help-block with-errors"></div>
+	  </div>
+    
+    <li>
+      <input type="submit" value="Submit" >
+    </li>
+  </ul>
+</form>
+</div>
+
+<!-- end footer --> 
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/site/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/site/js/validator.js""></script> 
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/site/js/html5.js"></script>
+<link href="<?php echo base_url(); ?>assets/site/css/owl.carousel.css" rel="stylesheet">
+<script src="<?php echo base_url(); ?>assets/site/js/owl.carousel.js"></script> 
+<script src="<?php echo base_url(); ?>assets/site/js/slick.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/site/css/slick.css">
+<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/site/css/slick-theme.css">
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/site/js/jquery.fancybox.js?v=2.1.5"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/site/css/jquery.fancybox.css?v=2.1.5" media="screen" />
+<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/site/css/jquery.fancybox-buttons.css" media="screen" />
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/site/js/jquery.fancybox-buttons.js"></script> 
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/site/js/script.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+ $(document).ready(function(){
+	 
+	  $('#field_user_type_other').hide(); 
+	 $('#field_user_type_student').show();
+	 
+	 $('#courseName').attr('required', true);
+	 $('#collageName').attr('required', true);
+	 $('#collegeAddress').attr('required', true);
+	 $('#compnayName').attr('required', false);
+	 $('#designation').attr('required', false);
+	 $('#companyAddress').attr('required', false);
+	 
+	 
+	 $('input[type=radio][name=rdUserType]').change(function() {
+		 
+		  if(this.value == 4){
+			$('#course_fees').text("2000");
+			$('#course_fee').val("2000");
+		 }else if(this.value == 5){
+			$('#course_fees').text("3000");
+			$('#course_fee').val("3000");
+		 }else{
+			 $('#course_fees').text("5000");
+			 $('#course_fee').val("5000");
+		 }
+		 
+		 if(this.value == 4){
+			
+				$('#field_user_type_other').hide(); 
+				$('#field_user_type_student').show();
+				
+				$('#courseName').attr('required', true);
+				$('#collageName').attr('required', true);
+				$('#collegeAddress').attr('required', true);
+				$('#compnayName').attr('required', false);
+				$('#designation').attr('required', false);
+				$('#companyAddress').attr('required', false);				
+		 }else{
+			$('#field_user_type_student').hide();
+			$('#field_user_type_other').show(); 
+			
+			$('#courseName').attr('required', false);
+			$('#collageName').attr('required', false);
+			$('#collegeAddress').attr('required', false);
+			$('#compnayName').attr('required', true);
+			$('#designation').attr('required', true);
+			$('#companyAddress').attr('required', true);
+		}
+	 });
+	 
+	  <!-- News Letter ajax request-->
+	$('#frmNewsletter').validator().on('submit', function (e) {
+		
+		if (e.isDefaultPrevented()) {
+			
+			
+		  } else {
+			 
+			var formData = new FormData(this);
+			
+			$.ajax({
+				
+				url: "<?php echo base_url(); ?>ajax/subscribe/subcribeUser",
+				type : "POST",
+				data : formData,
+				cache:false,
+				contentType: false,
+				processData: false,
+				success : function(result) {
+					var hh = JSON.parse(result);
+					alert(hh.msg);
+					var curUrl = window.location.href;
+					setTimeout(function(){ window.location.href = curUrl; },1000);
+					return false;
+				},
+				error: function(xhr, resp, text) {
+					console.log(xhr, resp, text);
+				}
+			});
+			
+			return false;
+		  }
+	
+ });
+ 
+ $('#frmRegister').validator().on('submit', function (e) {
+		
+		if (e.isDefaultPrevented()) {
+			
+		  } else {
+			  
+			  
+		  }
+});
+
+$('#feedback_form').validator().on('submit', function (e) {
+		
+		if (e.isDefaultPrevented()) {
+			
+		  } else {
+			  
+			  var formData = new FormData(this);
+			  
+				$.ajax({
+				
+				url: "<?php echo base_url(); ?>ajax/user/formData",
+				type : "POST",
+				data : formData,
+				cache:false,
+				contentType: false,
+				processData: false,
+				success : function(result) {
+					var hh = JSON.parse(result);
+					alert(hh.msg);
+					var curUrl = window.location.href;
+					setTimeout(function(){ window.location.href = curUrl; },1000);
+					return false;
+				},
+				error: function(xhr, resp, text) {
+					console.log(xhr, resp, text);
+				}
+			});
+			return false;
+		  }
+});
+ 
+ });
+
+$(document).ready(
+  
+  /* This is the function that will get executed after the DOM is fully loaded */
+  function () {
+    $( "#chequedate" ).datepicker({
+      changeMonth: true,//this option for allowing user to select month
+      changeYear: true //this option for allowing user to select from year range
+    });
+  }
+
+);
+ 
+</script>
+
+<script>
+
+$('.closebutton').click(function(){
+
+$('.popupback').hide();	
+	
+});
+
+$('.openpopup').click(function(){
+	
+popupId = $(this).attr('popid');
+
+$('#pop'+popupId).show();	
+	
+});
+$(document).ready(
+  
+  /* This is the function that will get executed after the DOM is fully loaded */
+  function () {
+    $( "#chequedate" ).datepicker({
+      changeMonth: true,//this option for allowing user to select month
+      changeYear: true //this option for allowing user to select from year range
+    });
+  }
+
+);
+
+</script>
+<script type="text/javascript">
+$(document).ready(function() {
+    var max_fields      = 10; //maximum input boxes allowed
+    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
+    var add_button      = $(".add_field_button"); //Add button ID
+   
+    var x = 1; //initlal text box count
+    $(".add_field_button").click(function(e){ //on add input button click
+	
+        e.preventDefault();
+        if(x < max_fields){ //max input box allowed
+            x++; //text box increment
+            $(wrapper).append('<div><input type="file" name="myfiles[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        }
+    });
+   
+    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+        e.preventDefault(); $(this).parent('div').remove(); x--;
+    })
+});
+</script>
+</body>
+</html>

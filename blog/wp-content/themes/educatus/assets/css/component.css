@@ -1,0 +1,21 @@
+.cbp-so-scroller {
+
+}
+
+.cbp-so-section {
+	
+}
+
+/* Clear floats of children */
+.cbp-so-section:before,
+.cbp-so-section:after {
+	content: " ";
+	display: table;
+	
+
+}
+
+.cbp-so-section:after {
+	clear: both;
+}
+

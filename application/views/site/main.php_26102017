@@ -1,0 +1,269 @@
+<!-- start banner box -->
+
+<div class="banner">
+  <ul class="owl-carousel" id="home_slide">
+  <?php foreach($slider_details as $slider){ ?>
+    <li><img src="<?php echo base_url().$slider->banner_image ; ?>" alt=""> </li>
+  <?php } ?>
+  </ul>
+  <!--<div class="slide_arrow_box"> <a class="btn prev" id="prev1"></a> <a class="btn next" id="next1"></a></div>-->
+</div>
+
+<!-- end banner box -->
+<?php if(!$this->session->userdata('site_user')){ 
+$currDate = date('Y-m-d'); ?>
+
+<div class="grey_strip">
+<div class="wrapper">
+
+<?php if(isset($registration_start) && isset($registration_end)){
+	$registartionStart = $registration_start;
+	$registartionEnd = $registration_end;
+
+if($currDate >= $registartionStart && $currDate <= $registartionEnd){
+?>
+	<p style="color:red"><strong>Last date for online registration is 23rd Oct, 2017</strong></p>
+    <div class="blu_btn"><a href="<?php echo base_url(); ?>register">Register Now</a></div>
+	 <?php }else{?>
+		<p><?php if($this->config->item('registration_notification') != null && $this->config->item('registration_notification') !=""){ echo $this->config->item('registration_notification'); }?></p>
+		
+	<?php } 
+		}else{ ?>
+			<p><?php if($this->config->item('registration_notification') != null && $this->config->item('registration_notification') !=""){ echo $this->config->item('registration_notification'); }?></p>
+		<?php } ?>
+  </div>
+</div>
+<?php 
+}?>
+
+<!--<div class="grey_strip">
+  <div class="wrapper">
+    <p>Registration for Sept'15-Feb'16 Session Closed from 1st August 2015</p>
+    <div class="blu_btn"><a href="#">Register Now</a></div>
+  </div>
+</div>
+-->
+
+
+
+
+
+<!-- start learn box -->
+<div class="learn_box">
+  <div class="wrapper">
+    <h1>Learn Intellectual Property Law Online</h1>
+    <ul>
+	<?php foreach($ip_competition as $competition){ ?>
+      <li> <img src="<?php echo base_url().$competition->icon_image; ?>" alt="">
+        <h2><?php echo $competition->name; ?></h2>
+        <p>
+		<?php if(strlen($competition->description)>150){
+				$competition_pos = strpos($competition->description, ' ', 150);
+						$competitionshort_cnt = substr($competition->description,0,$competition_pos );
+						echo strip_tags($competitionshort_cnt).'...';
+				}else{
+					echo strip_tags($competition->description);
+				} ?>
+		</p>
+    <?php } ?>
+    </ul>
+  </div>
+</div>
+<!-- end learn box --> 
+
+
+
+<!-- start about box -->
+
+<div class="about_box">
+  <div class="wrapper">
+    <div class="about">
+    
+    <div class="inner_abt">
+      <h1>About Us</h1>
+       <?php 
+		$pos = strpos($about_data->page_content, ' ', 300);
+						$short_cnt = substr($about_data->page_content,0,$pos );
+						echo $short_cnt.'...'; 
+		?>
+      <div class="blu_btn"><a href="<?php echo base_url(); ?>about/ficci">Know More</a></div>
+      </div>
+    </div>
+    <div class="right_content">
+      <ul>
+	  
+	  <?php foreach($course_page_data as $course_data){ 
+			if($course_data->page_slug!="training-material"){
+		?>
+		
+        <li>
+          <h3><img src="<?php echo base_url().$course_data->icon; ?>" alt=""> <?php echo $course_data->page_title; ?></h3>
+          <div class="content_left">
+            <p><?php 
+				if(strlen($course_data->page_content)>200){
+				$coursepos = strpos($course_data->page_content, ' ', 200);
+						$courseshort_cnt = substr($course_data->page_content,0,$coursepos );
+						echo strip_tags($courseshort_cnt).'...';
+				}else{
+					echo $course_data->page_content;
+				}?>
+				
+				</p>
+				<a href="<?php echo base_url(); ?>course/<?php echo $course_data->page_slug; ?>">Know More</a>
+          </div>
+		
+        </li>
+        	<?php 
+			}
+			} ?>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- end about box --> 
+
+<!-- start thumbline box -->
+<div class="wrapper">
+<div class="thumbline">
+  <ul>
+    <li><img src="<?php echo base_url(); ?>assets/site/images//m2.jpg" class="img1" alt="">
+      <div class="middle_cont"> <img src="<?php echo base_url(); ?>assets/site/images/thumb_logo.png" class="log1" alt="">
+        <div class="course">Course</div>
+        <div class="cov">Coverage</div>
+          <p>The Course would include the following topics
+            which would be dealt with in detail</p>
+      </div>
+    </li>
+	<?php foreach($course_coverage as $coverage){ ?>
+    <li> <img src="<?php echo base_url().$coverage->image; ?>" alt="">
+    
+     <span class="blckbg"></span>
+      <div class="middle_cont">
+       
+        <p class="cov"><?php echo $coverage->name;?></p>
+      </div>
+      <div class="blu_btn openpopup" popid="<?php echo $coverage->id; ?>"><a href="javascript:void(0)">Know More</a></div>
+    </li>
+   <?php } ?>
+   
+    <!--<li>
+      <div class="middle_cont"><a href="#"> View All
+        <p><img src="<?php //echo base_url();?>assets/site/images/right_arrow.png" alt=""></p>
+        </a></div>
+    </li>-->
+  </ul>
+</div>
+</div>
+
+<!-- end thumbline box --> 
+
+
+<!-- start our latest -->
+<div class="news_events">
+  <div class="wrapper">
+    <h1>News &amp; Events</h1>
+    
+    <div class="event_list">
+      <ul>
+	  <?php 
+		$url = "";
+		foreach($event_data as $event){ 
+		
+		if($event->type == "News"){
+		$dtDate = date('M d',strtotime($event->created));
+		}else{
+			$dtDate = date('M d',strtotime($event->start_date));
+					
+		}	
+		
+		?>
+		
+        <li>
+          <div class="thumb"><img src="<?php echo base_url().$event->main_image; ?>" alt=""></div>
+          <div class="content">
+           
+            <h4><?php echo $event->name; ?></h4>
+            <div class="date">Post by <?php echo ucwords($event->created_by); ?>  | <?php echo $dtDate ?></div>
+            <div class="grap"><img src="<?php echo base_url(); ?>assets/site/images/edit.png" alt=""> </div>
+            <p><?php if(strlen($event->event_content)>100){
+				$news_pos = strpos($event->event_content, ' ', 100);
+						$newsshort_cnt = substr($event->event_content,0,$news_pos );
+						echo strip_tags($newsshort_cnt).'...';
+				}else{
+					echo $event->event_content;
+				}  ?></p>
+            <a href="<?php echo base_url().'post/'.$event->slug;?>"><img src="<?php echo base_url(); ?>assets/site/images/red_arrow.png" alt=""></a> 
+            
+            </div>
+            
+            
+        </li>
+		<?php } ?>
+      </ul>
+    </div>
+    
+  </div>
+</div>
+
+<!-- end our latest --> 
+
+<!-- -------------- start testimonails ------------- -->
+
+<section class="tesimonials">
+  <div class="testi_box">
+    <div class="slider_box">
+      <!--<h1>HAPPY CLIENTS</h1>-->
+      <h3>WHAT IP EXPERTS HAVE TO SAY?</h3>
+      <div class="pager_slick_outer">
+        <div class="pager_slick">
+          <div class="slider slider-nav">
+		  
+		  <?php foreach($testimonial_data as $testimonial){ ?>
+            <div>
+              <div class="img_slide"><img src="<?php echo base_url().$testimonial->image; ?>" /></div>
+            </div>
+           <?php } ?>
+          </div>
+        </div>
+      </div>
+      <div class="slider_text slider-for">
+	   <?php foreach($testimonial_data as $testimonial_content){ ?>
+        <div>
+          <p class="test1"><?php echo $testimonial_content->description; ?></p>
+		  <p class="name"><?php echo $testimonial_content->title; ?></p>
+		  <p class="desg"><?php echo $testimonial_content->designation; ?></p>
+        </div>
+	   <?php } ?>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<?php foreach($course_coverage as $coverage_popup){ ?>
+ 
+<div class="popupback" id="pop<?php echo $coverage_popup->id; ?>">
+
+<div class="popbox">
+	<div class="popupheader">
+	<button type="button" class="closebutton">
+			<img src="<?php echo base_url(); ?>assets/site/images/close.png" alt="">
+		</button>
+		<h1><?php echo $coverage_popup->name; ?></h1>
+		
+	</div>
+	<div class="popupbody">
+		<p><?php echo $coverage_popup->description; ?> </p>
+	</div>
+
+
+</div>
+
+
+
+</div>
+
+ <?php } ?>
+<!-- -------------- end testimonails ------------- --> 
+  <?php $this->load->view('site/newsletter/newsletter'); ?>
